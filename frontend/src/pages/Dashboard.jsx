@@ -25,26 +25,19 @@ export default function Dashboard() {
   const [usingDemo, setUsingDemo] = useState(true);
 
   useEffect(() => {
-    // Set demo data immediately
+    // ALWAYS show demo data first - backend optional
     setData(demoData);
     setUsingDemo(true);
+    setLoading(false);
     
-    // Try to fetch real data with timeout
-    const timeout = setTimeout(() => {
-      // Keep demo data if API doesn't respond in 3 seconds
-    }, 3000);
-
+    // Try to fetch real data (non-blocking)
     api.get('/dashboard')
       .then(r => { 
-        clearTimeout(timeout);
         setData(r.data); 
         setUsingDemo(false);
       })
-      .catch(err => {
-        clearTimeout(timeout);
-        console.log('Using demo data - backend unavailable');
-        setUsingDemo(true);
-        // Keep demo data
+      .catch(() => {
+        // Keep demo data - backend not available
       });
   }, []);
 
