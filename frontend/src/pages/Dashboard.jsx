@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import demoData from '../context/DemoDataContext';
 
 const fmt = (n) => n ? `₹${Number(n).toLocaleString('en-IN')}` : '₹0';
 
@@ -14,14 +15,15 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [usingDemo, setUsingDemo] = useState(false);
 
   useEffect(() => {
     api.get('/dashboard')
       .then(r => { setData(r.data); setLoading(false); })
       .catch(err => {
-        console.log('Dashboard error:', err);
-        setError(true);
+        console.log('Using demo data - backend unavailable');
+        setUsingDemo(true);
+        setData(demoData);
         setLoading(false);
       });
   }, []);
@@ -38,10 +40,9 @@ export default function Dashboard() {
     </div>
   );
 
-  // Show demo data if API fails
-  const s = error ? {} : (data?.stats || {});
-  const recentITR = error ? [] : (data?.recentITR || []);
-  const recentGST = error ? [] : (data?.recentGST || []);
+  const s = data?.stats || {};
+  const recentITR = data?.recentITR || [];
+  const recentGST = data?.recentGST || [];
 
   return (
     <div className="space-y-6">
@@ -59,10 +60,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Error Banner */}
-      {error && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <p className="text-sm text-yellow-800">⚠️ Backend server is starting up. Data will load in a moment. Please refresh after 30 seconds.</p>
+      {/* Demo Banner */}
+      {usingDemo && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+          <p className="text-sm text-blue-800">
+            📊 <strong>Demo Mode:</strong> Showing sample data. Backend server is starting up or unavailable.
+          </p>
         </div>
       )}
 
