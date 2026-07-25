@@ -11,7 +11,7 @@ const navItems = [
   { to: '/duedates', icon: '📅', label: 'Due Dates', color: 'from-amber-500 to-yellow-500' },
   { to: '/tax-calculator', icon: '🧮', label: 'Tax Calculator', color: 'from-violet-500 to-purple-500' },
   { to: '/form16', icon: '📄', label: 'Form 16', color: 'from-cyan-500 to-blue-500' },
-  { to: '/import', icon: '📥', label: 'Import Data', color: 'from-teal-500 to-cyan-500' },
+  { to: '/import', icon: '📥', label: 'Tax Data Import', color: 'from-teal-500 to-cyan-500' },
 ];
 
 export default function Layout() {
