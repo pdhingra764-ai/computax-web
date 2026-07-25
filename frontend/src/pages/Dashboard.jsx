@@ -11,36 +11,44 @@ const statusBadge = (s) => {
   return <span className={map[s]||'badge-draft'}>{s}</span>;
 };
 
+// Default data while waiting
+const defaultData = {
+  stats: { totalClients: 0, totalITR: 0, filedITR: 0, pendingITR: 0, totalGST: 0, filedGST: 0, pendingGST: 0 },
+  recentITR: [],
+  recentGST: []
+};
+
 export default function Dashboard() {
   const { user } = useAuth();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [usingDemo, setUsingDemo] = useState(false);
+  const [data, setData] = useState(defaultData);
+  const [loading, setLoading] = useState(false);
+  const [usingDemo, setUsingDemo] = useState(true);
 
   useEffect(() => {
+    // Set demo data immediately
+    setData(demoData);
+    setUsingDemo(true);
+    
+    // Try to fetch real data with timeout
+    const timeout = setTimeout(() => {
+      // Keep demo data if API doesn't respond in 3 seconds
+    }, 3000);
+
     api.get('/dashboard')
-      .then(r => { setData(r.data); setLoading(false); })
+      .then(r => { 
+        clearTimeout(timeout);
+        setData(r.data); 
+        setUsingDemo(false);
+      })
       .catch(err => {
+        clearTimeout(timeout);
         console.log('Using demo data - backend unavailable');
         setUsingDemo(true);
-        setData(demoData);
-        setLoading(false);
+        // Keep demo data
       });
   }, []);
 
-  if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="text-center">
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 animate-pulse"
-          style={{background:'linear-gradient(135deg,#FF9933,#FF6600)'}}>
-          <span className="text-white font-black font-display">CT</span>
-        </div>
-        <p className="text-gray-400 text-sm">Loading dashboard...</p>
-      </div>
-    </div>
-  );
-
-  const s = data?.stats || {};
+  const s = data?.stats || defaultData.stats;
   const recentITR = data?.recentITR || [];
   const recentGST = data?.recentGST || [];
 
