@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=350">
+  <title>CompuTax Data Filler</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 350px;
+      background: linear-gradient(135deg, #1a237e 0%, #0d1547 100%);
+      color: white;
+      min-height: 200px;
+    }
+    .header {
+      padding: 16px;
+      background: rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FF9933;
+      margin-bottom: 4px;
+    }
+    .header p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+    }
+    .status-bar {
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4CAF50;
+      animation: pulse 2s infinite;
+    }
+    .status-dot.inactive {
+      background: #f44336;
+      animation: none;
+    }
+    .status-dot.capturing {
+      background: #FFC107;
+      animation: pulse 0.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .status-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+    }
+    .content {
+      padding: 16px;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #FF9933, #FF6600);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255,153,51,0.4);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .btn-capture {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+    }
+    .captured-data {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .captured-data h3 {
+      font-size: 12px;
+      color: #FF9933;
+      margin-bottom: 8px;
+    }
+    .data-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 11px;
+    }
+    .data-item:last-child {
+      border-bottom: none;
+    }
+    .data-label {
+      color: rgba(255,255,255,0.7);
+    }
+    .data-value {
+      color: white;
+      font-weight: 600;
+    }
+    .footer {
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.2);
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+    .steps {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .steps h3 {
+      font-size: 11px;
+      color: #FF9933;
+      margin-bottom: 8px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.8);
+    }
+    .step-num {
+      background: rgba(255,153,51,0.3);
+      color: #FF9933;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .success {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid rgba(76, 175, 80, 0.4);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .success-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .success-text {
+      font-size: 11px;
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🧾 CompuTax Data Filler</h1>
+    <p>Income Tax Portal Se Data Capture Karein</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot inactive" id="statusDot"></div>
+    <span class="status-text" id="statusText">Extension Disabled</span>
+  </div>
+
+  <div class="content">
+    <div class="steps">
+      <h3>📋 Kaise Use Karein:</h3>
+      <div class="step">
+        <span class="step-num">1</span>
+        <span>Income Tax Portal (incometax.gov.in) mein login karein</span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span>Form 26AS, AIS ya ITR Prefill page kholein</span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span>"Capture Data" button click karein</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="enableBtn">✅ Enable Extension</button>
+    
+    <button class="btn btn-capture" id="captureBtn" disabled>
+      📥 Capture Current Page Data
+    </button>
+
+    <button class="btn btn-secondary" id="sendToCompuTaxBtn" disabled>
+      🚀 Send to CompuTax
+    </button>
+
+    <div class="captured-data" id="capturedData" style="display: none;">
+      <h3>📊 Captured Data:</h3>
+      <div id="dataList"></div>
+    </div>
+
+    <div class="success" id="successMsg" style="display: none;">
+      <div class="success-icon">✅</div>
+      <div class="success-text">Data CompuTax mein bhej diya!</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    CompuTax Web v2 • Chrome Extension
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
