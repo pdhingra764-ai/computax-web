@@ -12,6 +12,8 @@ import GSTFiling from './pages/GSTFiling';
 import TDSFiling from './pages/TDSFiling';
 import DueDates from './pages/DueDates';
 import ImportData from './pages/ImportData';
+import TaxCalculator from './pages/TaxCalculator';
+import Form16Generator from './pages/Form16Generator';
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -42,6 +44,8 @@ export default function App() {
             <Route path="tds" element={<TDSFiling />} />
             <Route path="duedates" element={<DueDates />} />
             <Route path="import" element={<ImportData />} />
+            <Route path="tax-calculator" element={<TaxCalculator />} />
+            <Route path="form16" element={<Form16Generator />} />
           </Route>
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>

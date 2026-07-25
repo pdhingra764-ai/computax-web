@@ -9,6 +9,8 @@ const navItems = [
   { to: '/gst', icon: '🧾', label: 'GST Filing', color: 'from-green-500 to-emerald-500' },
   { to: '/tds', icon: '💰', label: 'TDS', color: 'from-pink-500 to-rose-500' },
   { to: '/duedates', icon: '📅', label: 'Due Dates', color: 'from-amber-500 to-yellow-500' },
+  { to: '/tax-calculator', icon: '🧮', label: 'Tax Calculator', color: 'from-violet-500 to-purple-500' },
+  { to: '/form16', icon: '📄', label: 'Form 16', color: 'from-cyan-500 to-blue-500' },
   { to: '/import', icon: '📥', label: 'Import Data', color: 'from-teal-500 to-cyan-500' },
 ];
 

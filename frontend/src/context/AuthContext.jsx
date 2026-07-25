@@ -3,10 +3,32 @@ import api from '../api/axios';
 
 const AuthContext = createContext(null);
 
+// Demo user for bypassing login (remove in production)
+const DEMO_USER = {
+  id: 'demo123',
+  name: 'Demo CA',
+  email: 'demo@computax.com',
+  role: 'ca',
+  firm: 'CompuTax Demo Firm'
+};
+
+const DEMO_TOKEN = 'demo-token-bypass-login';
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
+    // Check for existing user or demo bypass
     const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : null;
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return DEMO_USER;
+      }
+    }
+    // Auto-login with demo user
+    localStorage.setItem('user', JSON.stringify(DEMO_USER));
+    localStorage.setItem('token', DEMO_TOKEN);
+    return DEMO_USER;
   });
   const [loading, setLoading] = useState(false);
 
