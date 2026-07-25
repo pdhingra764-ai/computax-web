@@ -14,9 +14,16 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    api.get('/dashboard').then(r => { setData(r.data); setLoading(false); }).catch(() => setLoading(false));
+    api.get('/dashboard')
+      .then(r => { setData(r.data); setLoading(false); })
+      .catch(err => {
+        console.log('Dashboard error:', err);
+        setError(true);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) return (
@@ -31,7 +38,10 @@ export default function Dashboard() {
     </div>
   );
 
-  const s = data?.stats || {};
+  // Show demo data if API fails
+  const s = error ? {} : (data?.stats || {});
+  const recentITR = error ? [] : (data?.recentITR || []);
+  const recentGST = error ? [] : (data?.recentGST || []);
 
   return (
     <div className="space-y-6">
@@ -48,6 +58,13 @@ export default function Dashboard() {
           🇮🇳 India Tax Platform
         </div>
       </div>
+
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <p className="text-sm text-yellow-800">⚠️ Backend server is starting up. Data will load in a moment. Please refresh after 30 seconds.</p>
+        </div>
+      )}
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -98,8 +115,8 @@ export default function Dashboard() {
             <Link to="/itr" className="text-xs text-white/80 hover:text-white bg-white/20 px-2 py-1 rounded-lg">View all</Link>
           </div>
           <div className="divide-y divide-gray-50">
-            {!data?.recentITR?.length && <p className="px-5 py-8 text-center text-sm text-gray-400">No ITR filings yet</p>}
-            {data?.recentITR?.map(f => (
+            {!recentITR.length && <p className="px-5 py-8 text-center text-sm text-gray-400">No ITR filings yet</p>}
+            {recentITR.map(f => (
               <div key={f._id} className="px-5 py-3 flex items-center justify-between hover:bg-orange-50/30">
                 <div>
                   <p className="text-sm font-semibold text-gray-800">{f.client?.name}</p>
@@ -118,8 +135,8 @@ export default function Dashboard() {
             <Link to="/gst" className="text-xs text-white/80 hover:text-white bg-white/20 px-2 py-1 rounded-lg">View all</Link>
           </div>
           <div className="divide-y divide-gray-50">
-            {!data?.recentGST?.length && <p className="px-5 py-8 text-center text-sm text-gray-400">No GST filings yet</p>}
-            {data?.recentGST?.map(f => (
+            {!recentGST.length && <p className="px-5 py-8 text-center text-sm text-gray-400">No GST filings yet</p>}
+            {recentGST.map(f => (
               <div key={f._id} className="px-5 py-3 flex items-center justify-between hover:bg-green-50/30">
                 <div>
                   <p className="text-sm font-semibold text-gray-800">{f.client?.name}</p>
